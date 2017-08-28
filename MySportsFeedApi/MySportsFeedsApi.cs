@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MySportsFeeds
 {
@@ -38,7 +39,7 @@ namespace MySportsFeeds
         {
             if (!VerifyFormat(Format))
             {
-                throw new ArgumentException(nameof(Format), "Invalid format.");
+                throw new ArgumentException(nameof(Format), $"Invalid format: {Format}.  Must be json, xml, or csv.");
             }
 
             try
@@ -64,9 +65,9 @@ namespace MySportsFeeds
         /// <returns></returns>
         public static async Task<T> FetchFeedAsync<T>(string League, string SeasonName, string feed, Dictionary<string, string> Params = null, bool Force = false, string Format = "json")
         {
-            if (!VerifyFormat(Format))
+            if (!VerifyFormat(Format, false))
             {
-                throw new ArgumentException(nameof(Format), "Invalid format.");
+                throw new ArgumentException(nameof(Format), $"Invalid format: {Format}.  Must be json or xml");
             }
             try
             {
@@ -82,28 +83,22 @@ namespace MySportsFeeds
         {
             if (inputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
             {
-                JsonConvert.DeserializeObject<T>(input);
+                return JsonConvert.DeserializeObject<T>(input);
             }
             if (inputFormat.Equals("xml", StringComparison.OrdinalIgnoreCase))
             {
-                throw new NotImplementedException();
-            }
-            if (inputFormat.Equals("csv", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new NotImplementedException();
-            }
-            if (inputFormat.Equals("xsd", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new NotImplementedException();
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                StringReader reader = new StringReader(input);
+                return (T)serializer.Deserialize(reader);
             }
 
-            throw new ArgumentException(nameof(inputFormat), $"Invalid format: {inputFormat}");
+            throw new ArgumentException(nameof(inputFormat), $"Invalid format: {inputFormat}.  Must be json or xml");
         }
-        private static bool VerifyFormat(string format)
+        private static bool VerifyFormat(string format, bool allowCsv = true)
         {
             if (format.Equals("json", StringComparison.OrdinalIgnoreCase) ||
                 format.Equals("xml", StringComparison.OrdinalIgnoreCase) ||
-                format.Equals("csv", StringComparison.OrdinalIgnoreCase))
+                (format.Equals("csv", StringComparison.OrdinalIgnoreCase) && allowCsv))
             {
                 return true;
             }
