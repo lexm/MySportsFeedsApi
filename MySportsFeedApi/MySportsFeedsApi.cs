@@ -27,34 +27,55 @@ namespace MySportsFeedsApi
         /// <summary>
         /// Fetch a MySportsFeed as a string
         /// </summary>
-        /// <param name="League">The League Abbriviation (nhl)</param>
+        /// <param name="League">The League Abbreviation (nhl)</param>
         /// <param name="SeasonName">The season to use (2016-20017-regular)</param>
         /// <param name="feed">The feed to retrieve (cumulative_player_stats)</param>
         /// <param name="Params">Parameters, in the order they will be sent to the server</param>
         /// <param name="Force">Force a response, even if it has not changed.  Default is false</param>
         /// <param name="Format">The format to retrieve the results (json, xml, csv, xsd).  Default is json</param>
         /// <returns></returns>
-        public static async Task<string> FetchFeedAsync(string League, string SeasonName, string feed, Dictionary<string, string> Params, bool Force = false, string Format = "json")
+        public static async Task<string> FetchFeedAsync(string League, string SeasonName, string feed, Dictionary<string, string> Params = null, bool Force = false, string Format = "json")
         {
-            VerifyFormat(Format);
-            return await PullFromServer($@"{League}/{SeasonName}/{feed}", Format, BuildParams(Params, Force));
+            if (!VerifyFormat(Format))
+            {
+                throw new ArgumentException(nameof(Format), "Invalid format.");
+            }
+
+            try
+            {
+                return await PullFromServer($@"{League}/{SeasonName}/{feed}", Format, BuildParams(Params, Force));
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
-        /// Fetcch a MySportsFeed and return as type T
+        /// Fetch a MySportsFeed and return as type T
         /// </summary>
         /// <typeparam name="T">The type to return the results as</typeparam>
-        /// <param name="League">The League Abbriviation (nhl)</param>
+        /// <param name="League">The League Abbreviation (nhl)</param>
         /// <param name="SeasonName">The season to use (2016-20017-regular)</param>
         /// <param name="feed">The feed to retrieve (cumulative_player_stats)</param>
         /// <param name="Params">Parameters, in the order they will be sent to the server</param>
         /// <param name="Force">Force a response, even if it has not changed.  Default is false</param>
         /// <param name="Format">The format to retrieve the results (json, xml, csv, xsd).  Default is json</param>
         /// <returns></returns>
-        public static async Task<T> FetchFeedAsync<T>(string League, string SeasonName, string feed, Dictionary<string, string> Params, bool Force = false, string Format = "json")
+        public static async Task<T> FetchFeedAsync<T>(string League, string SeasonName, string feed, Dictionary<string, string> Params = null, bool Force = false, string Format = "json")
         {
-            VerifyFormat(Format);
-            return ConvertTo<T>(await PullFromServer($@"{League}/{SeasonName}/{feed}", Format, BuildParams(Params, Force)), Format);
+            if (!VerifyFormat(Format))
+            {
+                throw new ArgumentException(nameof(Format), "Invalid format.");
+            }
+            try
+            {
+                return ConvertTo<T>(await PullFromServer($@"{League}/{SeasonName}/{feed}", Format, BuildParams(Params, Force)), Format);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private static T ConvertTo<T>(string input, string inputFormat)
@@ -82,8 +103,7 @@ namespace MySportsFeedsApi
         {
             if (format.Equals("json", StringComparison.OrdinalIgnoreCase) ||
                 format.Equals("xml", StringComparison.OrdinalIgnoreCase) ||
-                format.Equals("csv", StringComparison.OrdinalIgnoreCase) ||
-                format.Equals("xsd", StringComparison.OrdinalIgnoreCase))
+                format.Equals("csv", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
