@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MySportsFeedsApi.Models;
+using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
-namespace MySportsFeeds
+namespace MySportsFeedsApi
 {
-    public static class MySportsFeedsApi
+    public static class MySportsFeeds
     {
         private const string _BASE = @"https://api.mysportsfeeds.com/v1.1/pull/";
         
@@ -63,7 +63,7 @@ namespace MySportsFeeds
         /// <param name="Force">Force a response, even if it has not changed.  Default is false</param>
         /// <param name="Format">The format to retrieve the results (json, xml, csv, xsd).  Default is json</param>
         /// <returns></returns>
-        public static async Task<T> FetchFeedAsync<T>(string League, string SeasonName, string feed, Dictionary<string, string> Params = null, bool Force = false, string Format = "json")
+        public static async Task<T> FetchFeedAsync<T>(string League, string SeasonName, string feed, Dictionary<string, string> Params = null, bool Force = false, string Format = "json") where T : IFeedRoot
         {
             if (!VerifyFormat(Format, false))
             {
@@ -79,7 +79,7 @@ namespace MySportsFeeds
             }
         }
 
-        private static T ConvertTo<T>(string input, string inputFormat)
+        private static T ConvertTo<T>(string input, string inputFormat = "json")
         {
             if (inputFormat.Equals("json", StringComparison.OrdinalIgnoreCase))
             {
@@ -87,9 +87,7 @@ namespace MySportsFeeds
             }
             if (inputFormat.Equals("xml", StringComparison.OrdinalIgnoreCase))
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
-                StringReader reader = new StringReader(input);
-                return (T)serializer.Deserialize(reader);
+                throw new NotImplementedException();
             }
 
             throw new ArgumentException(nameof(inputFormat), $"Invalid format: {inputFormat}.  Must be json or xml");
@@ -156,7 +154,7 @@ namespace MySportsFeeds
             {
                 using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                 {
-                    return await reader.ReadToEndAsync();
+                    return (await reader.ReadToEndAsync()).Replace("@", "").Replace("#", "");
                 }
             }
         }

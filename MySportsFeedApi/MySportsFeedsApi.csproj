@@ -7,8 +7,8 @@
     <ProjectGuid>{58FC3E9E-F3F2-462B-9734-18B009589ACC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MySportsFeedApi</RootNamespace>
-    <AssemblyName>MySportsFeedApi</AssemblyName>
+    <RootNamespace>MySportsFeedsApi</RootNamespace>
+    <AssemblyName>MySportsFeedsApi</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -46,6 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\IFeedRoot.cs" />
+    <Compile Include="Models\MLB\ActivePlayers.cs" />
+    <Compile Include="Models\MLB\CumulativePlayerStats.cs" />
+    <Compile Include="Models\MLB\DailyDFS.cs" />
+    <Compile Include="Models\MLB\DailyGameSchedule.cs" />
+    <Compile Include="Models\MLB\DailyPlayerStats.cs" />
+    <Compile Include="Models\MLB\DivisionTeamStandings.cs" />
+    <Compile Include="Models\MLB\FullGameSchedule.cs" />
+    <Compile Include="Models\MLB\GameBoxscore.cs" />
+    <Compile Include="Models\MLB\GamePlayByPlay.cs" />
+    <Compile Include="Models\MLB\GameStartingLineup.cs" />
+    <Compile Include="Models\MLB\OverallTeamStandings.cs" />
+    <Compile Include="Models\MLB\PlayerGameLogs.cs" />
+    <Compile Include="Models\MLB\PlayerInjury.cs" />
+    <Compile Include="Models\MLB\PlayoffTeamStandings.cs" />
+    <Compile Include="Models\MLB\RosterPlayers.cs" />
+    <Compile Include="Models\MLB\Scoreboard.cs" />
+    <Compile Include="Models\MLB\TeamGameLogs.cs" />
     <Compile Include="MySportsFeedsApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
